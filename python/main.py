@@ -381,7 +381,7 @@ def game_loop(game_variables):
         print("\n\nYou'd better do some hunting or buy food and soon!!!!")
 
     game_variables["food"] = int(game_variables["food"])
-    game_variables["ammunitition"] = int(game_variables["ammunitition"])
+    game_variables["ammunition"] = int(game_variables["ammunition"])
     game_variables["clothing"] = int(game_variables["clothing"])
     game_variables["supplies"] = int(game_variables["supplies"])
     game_variables["cash"] = int(game_variables["cash"])
@@ -515,7 +515,7 @@ def do_events(game_variables):
         # of events. If by chance the user has over 16 events, it will be just #16.
         game_variables["event_counter"] = game_variables["event_counter"] + 1
         new_event = game_variables["event_counter"]
- 
+
         if new_event == 1:
             print("Wagon breaks down - lose time and supplies fixing it")
             game_variables["supplies"] = game_variables["supplies"] - 8
@@ -566,7 +566,3 @@ def do_events(game_variables):
         elif new_event == 10:
             print("Lose your way in heavy fog - Time is lost")
             game_variables["mileage"] = game_variables["mileage"] - 10 - random.randint(1, 5)
-
-
-
-
