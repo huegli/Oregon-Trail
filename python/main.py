@@ -1,6 +1,6 @@
 import random
 import builtins
-import keyboard
+# import keyboard
 import time
 
 
@@ -509,7 +509,63 @@ def hunting(game_variables):
 
     return game_variables
 
-
+def do_events(game_variables):
+    if random.randint(1, 100) < 50:
+        # 33% chance that an event would happen. But, each event would be an incremental sequence
+        # of events. If by chance the user has over 16 events, it will be just #16.
+        game_variables["event_counter"] = game_variables["event_counter"] + 1
+        new_event = game_variables["event_counter"]
+ 
+        if new_event == 1:
+            print("Wagon breaks down - lose time and supplies fixing it")
+            game_variables["supplies"] = game_variables["supplies"] - 8
+            game_variables["mileage"] = game_variables["mileage"] - random.randint(1, 5)
+        elif new_event == 2:
+            print("Ox injures leg - slows you down for the rest of trip")
+            game_variables["animals"] = game_variables["animals"] - 20
+            game_variables["mileage"] = game_variables["mileage"] - 25
+        elif new_event == 3:
+            print("Bad Luck - Your daughter broke her arm\nYou had to stop and use supplies to make a sling.")
+            game_variables["supplies"] = game_variables["supplies"] - 5
+            game_variables["mileage"] = game_variables["mileage"] - 5
+        elif new_event == 4:
+            print("Ox wanders off - spend time looking for it.")
+            game_variables["mileage"] = game_variables["mileage"] - 17
+        elif new_event == 5:
+            print("Your son gets lost - spend half the day looking for him")
+            game_variables["mileage"] = game_variables["mileage"] - 10
+        elif new_event == 6:
+            print("Unsafe water - lose time looking for a clean spring.")
+            game_variables["mileage"] = game_variables["mileage"] - random.randint(1, 10) - 2
+        elif new_event == 7:
+            print("Heavy rains - time and supplies lost")
+            game_variables["food"] = game_variables["food"] - 10
+            game_variables["ammunition"] = game_variables["ammunition"] - 500
+            game_variables["supplies"] = game_variables["supplies"] - 15
+            game_variables["mileage"] = game_variables["mileage"] - random.randint(1, 10) - 5
+        elif new_event == 8:
+            print("Bandits Attack!")
+            my_shooting = shooting()
+            game_variables["ammunition"] = game_variables["ammunition"] - (my_shooting * 20)
+            if game_variables["ammunition"] < 1:
+                print("You ran out of bullets - They get lots of cash")
+                game_variables["cash"] = int(game_variables["cash"] / 3)
+                print("You got shot in the leg and they took one of your oxen.")
+                game_variables["injury"] = True
+                print("Better have a doc look at your wound.")
+                game_variables["supplies"] = game_variables["supplies"] - 5
+                game_variables["animals"] = game_variables["animals"] - 20
+            else:
+                print("Quickest draw outside of Dodge City!!\nYou got 'em!")
+        elif new_event == 9:
+            print("There was a fire in your wagon - Food and supplies damaged!")
+            game_variables["food"] = game_variables["food"] - 40
+            game_variables["ammunition"] = game_variables["ammunition"] - 400
+            game_variables["mileage"] = game_variables["mileage"] - 15
+            game_variables["supplies"] = game_variables["supplies"] - random.randint(1, 8) - 3
+        elif new_event == 10:
+            print("Lose your way in heavy fog - Time is lost")
+            game_variables["mileage"] = game_variables["mileage"] - 10 - random.randint(1, 5)
 
 
 
