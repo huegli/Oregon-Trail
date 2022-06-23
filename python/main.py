@@ -102,7 +102,7 @@ def illness(game_variables):
         return game_variables
 
     return game_variables
-    
+
 def mountains(game_variables):
     # Are you in the mountains?
     mountain_check = 9 - ((game_variables["mileage"] / 100 - 15) **2 + 72) / (
@@ -608,3 +608,90 @@ def do_events(game_variables):
             print("Helpful indians show you where to find more food.")
             game_variables["food"] = game_variables["food"] + 14
     return game_variables
+
+def riders(game_variables):
+    my_tactic = 0
+    if random.randint(1, 10) > ((game_variables["mileage"] / 100 - 4) ** 2 + 72) / (
+        (game_variables["mileage"] / 100 - 4) ** 2 + 12) - 1:
+        return
+    else:
+        if random.randint(1, 10) < 3:
+            print("Riders ahead. They don't look hostile.")
+            riders_hostile = False
+        else:
+            print("Riders ahead. They look hostile.")
+            riders_hostile = True
+
+        while True:
+            try:
+                my_tactic = int(builtins.input("\nTactics\n(1) Run (2) Attack (3) Continue (4) Circle Wagons: "))
+            except ValueError:
+                print("Sorry, I didn't understand that.")
+            if my_tactic > 0 or my_tactic < 4:
+                break
+            else:
+                print("Sorry, I didn't understand that.")
+        if riders_hostile:
+            if my_tactic == 1:
+                # Run 
+                game_variables["mileage"] = game_variables["mileage"] + 20
+                game_variables["ammunition"] = game_variables["ammunition"] - 1
+                game_variables["animals"] = game_variables["animals"] - 40
+            elif my_tactic == 2:
+                # attack
+                my_shooting = shooting()
+                game_variables["ammunition"] = game_variables["ammunition"] - (my_shooting 40) - 80
+                if my_shooting == 1:
+                    print("Nice Shooting Tex - You drove them off.")
+                elif my_shooting > 4:
+                    print("Lousy Shot - You got knifed\nYou have to see Ol' Doc Blanchard.")
+                    game_variables["injury"] = True
+                else:
+                    print("Kinda slow with your Colt. 45")
+            elif my_tactic == 3:
+                # continue
+                if random.randint(1, 10) > 7:
+                    print("They did not attack.")
+                    riders_hostile = False
+                else:
+                    game_variables["ammunition"] = game_variables["ammunition"] - 150
+                    game_variables["mileage"] = game_variables["mileage"] - 15
+            else:
+                # circle the wagons
+                my_shooting = shooting()
+                game_variables["ammunition"] = game_variables["ammunition"] - (my_shooting * 30)
+                game_variables["mileage"] = game_variables["mileage"] - 25
+                if my_shooting == 1:
+                    print("Nice Shooting Tex - You drove them off.")
+                elif my_shooting > 4:
+                    print("Lousy Shot - You got knifed\nYou have to see Ol' Doc Blanchard.")
+                    game_variables["injures"] = True
+                else::
+                    print("Kinda slow with your Colt. 45")
+
+        else:
+            # riders not hostile.
+            if my_tactic == 1:
+                # run
+                game_variables["mileage"] = game_variables["mileage"] + 15
+                game_variables["animals"] = game_variables["animals"] - 10
+            elif my_tactic ==  2:
+                # attack
+                game_variables["animals"] = game_variables["animals"] - 5
+                game_variables["ammunition"] = game_variables["ammunition"] - 100
+            elif my_tactic ==  3:
+                # continue
+                game_variables["mileage"] = game_variables["mileage"] - 5
+                print("They did not attack.")
+            else:
+                # circle the wagons
+                game_variables["mileage"] = game_variables["mileage"] - 5
+                print("They did not attack.")
+        if riders_hostile:
+            print("The riders were hostile - Check for loses.")
+            if game_variables["ammunition"]]] < 1:
+                print("You ran out of bullets and got massacred by the riders!")
+                dying("injury")
+        else:
+            print("The riders were friendly, but check for possible losses")
+        return game_variables
