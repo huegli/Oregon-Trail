@@ -566,3 +566,45 @@ def do_events(game_variables):
         elif new_event == 10:
             print("Lose your way in heavy fog - Time is lost")
             game_variables["mileage"] = game_variables["mileage"] - 10 - random.randint(1, 5)
+        elif new_event == 11:
+            print("You killed a poisonous snake after it bit you")
+            game_variables["ammunition"] = game_variables["ammunition"] - 10
+            game_variables["supplies"] = game_variables["supplies"] - 5
+            if game_variables["supplies"] < 1:
+                print("You die of snakebite since you have no medicine")
+                dying("no_supplies")
+        elif new_event == 12:
+            print("Wagon gets swamped fording river - lose food and clothes.")
+            game_variables["food"] = game_variables["food"] - 30
+            game_variables["clothing"] = game_variables["clothing"] - 20
+            game_variables["mileage"] = game_variables["mileage"] - 20 - random.randint(1, 20)
+        elif new_event == 13:
+            print("Wild animals attack!")
+            if game_variables["ammunition"] < 40:
+                print("You were too low on bullets - The wolves overpowered you")
+                game_variables["injury"] = True
+            else:
+                my_shooting = shooting()
+                if my_shooting > 2:
+                    print("Slow on the draw - They got at your food and clothes.")
+                else:
+                    print("Nice Shootin' Partner - They didn't get much.")
+                game_variables["food"] = game_variables["food"] - (my_shooting * 8)
+                game_variables["clothing"] = game_variables["clothing"] - (my_shooting * 4)
+                game_variables["ammunition"] = game_variables["ammunition"] - (my_shooting * 20)
+        elif new_event == 14:
+            print("Cold Weather!!")
+            if game_variables["clothing"] > random.randint(1, 4) + 22:
+                print("You have enough clothing to keep you warm.")
+            else:
+                print("You don't have enough clothing to keep you warm.")
+                game_variables = illness(game_variables)
+        elif new_event == 15:
+            print("Hail Storm - Supplies Damaged")
+            game_variables["ammunition"] = game_variables["ammunition"] - 200
+            game_variables["supplies"] = game_variables["supplies"] - 4 - random.randint(1, 3)
+            game_variables["mileage"] = game_variables["mileage"] - 5 - random.randint(1, 10)
+        else:
+            print("Helpful indians show you where to find more food.")
+            game_variables["food"] = game_variables["food"] + 14
+    return game_variables
