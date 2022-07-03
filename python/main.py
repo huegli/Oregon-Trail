@@ -234,6 +234,7 @@ def buying_routine(object_name, min_amount, max_amount, wallet):
             break
     return my_purchase
 
+
 def initial_purchases(game_variables):
     # Oxen Team
     oxen = buying_routine("oxen_team", 200, 300, game_variables["cash"])
@@ -363,24 +364,25 @@ def final_turn(game_variables):
     else:
         game_variables["game_turn"] = game_variables["game_turn"] - 246
         print(the_day + ", December " + str(game_variables["game_turn"]) + ", 1847")
-    
+
     user_stats(game_variables)
     print("\tPresident James K. Polk sends you his\n\theartiest congratulations")
     print("\tAnd wishes you a prosperous life ahead\n\tat your new home.")
 
+
 def game_loop(game_variables):
     input_x = 0
     if game_variables["food"] < 0:
-        game_variables["food"] = 0;
+        game_variables["food"] = 0
 
     if game_variables["ammunition"] < 0:
-        game_variables["ammunition"] = 0;
+        game_variables["ammunition"] = 0
 
     if game_variables["clothing"] < 0:
-        game_variables["clothing"] = 0;
+        game_variables["clothing"] = 0
 
     if game_variables["supplies"] < 0:
-        game_variables["supplies"] = 0;
+        game_variables["supplies"] = 0
 
     if game_variables["food"] < 13:
         print("\n\nYou'd better do some hunting or buy food and soon!!!!")
@@ -391,7 +393,6 @@ def game_loop(game_variables):
     game_variables["supplies"] = int(game_variables["supplies"])
     game_variables["cash"] = int(game_variables["cash"])
     game_variables["mileage"] = int(game_variables["mileage"])
-    
     game_variables["turn_mileage"] = game_variables["mileage"]
 
     if game_variables["illness"] or game_variables["injury"]:
@@ -437,7 +438,6 @@ def game_loop(game_variables):
             else:
                 break
 
-
     if input_x == 1:
         game_variables = fort(game_variables)
     elif input_x == 2:
@@ -459,11 +459,12 @@ def game_loop(game_variables):
 
     game_variables["food"] = game_variables["food"] - (8 + 5 * input_x)
     game_variables["mileage"] = game_variables["mileage"] + 200 + (
-            game_variables["animals"] - 220) / 5 + random.randint(1, 10)
+        game_variables["animals"] - 220) / 5 + random.randint(1, 10)
     game_variables["insufficient_clothing"] = False
     game_variables["blizzard"] = False
 
     return game_variables
+
 
 def fort(game_variables):
     print("Enter what you wish to spend on the following:")
@@ -491,11 +492,12 @@ def fort(game_variables):
 
     return game_variables
 
+
 def hunting(game_variables):
     # let's check to see if you have enough bullets to go hunting. You need 39 or more
     if game_variables["ammunition"] > 39:
         my_shooting = shooting()
-        game_variables["ammunition"] = game_variables["ammunition"] - (random.randint(1,10) * 3)
+        game_variables["ammunition"] = game_variables["ammunition"] - (random.randint(1, 10) * 3)
 
         if my_shooting > 4:
             print("You Missed -- and your dinner got away..")
@@ -513,6 +515,7 @@ def hunting(game_variables):
         dying("no_food")
 
     return game_variables
+
 
 def do_events(game_variables):
     if random.randint(1, 100) < 50:
@@ -614,10 +617,11 @@ def do_events(game_variables):
             game_variables["food"] = game_variables["food"] + 14
     return game_variables
 
+
 def riders(game_variables):
     my_tactic = 0
     if random.randint(1, 10) > ((game_variables["mileage"] / 100 - 4) ** 2 + 72) / (
-        (game_variables["mileage"] / 100 - 4) ** 2 + 12) - 1:
+            (game_variables["mileage"] / 100 - 4) ** 2 + 12) - 1:
         return
     else:
         if random.randint(1, 10) < 3:
@@ -638,7 +642,7 @@ def riders(game_variables):
                 print("Sorry, I didn't understand that.")
         if riders_hostile:
             if my_tactic == 1:
-                # Run 
+                # Run
                 game_variables["mileage"] = game_variables["mileage"] + 20
                 game_variables["ammunition"] = game_variables["ammunition"] - 1
                 game_variables["animals"] = game_variables["animals"] - 40
@@ -684,7 +688,7 @@ def riders(game_variables):
                 # attack
                 game_variables["animals"] = game_variables["animals"] - 5
                 game_variables["ammunition"] = game_variables["ammunition"] - 100
-            elif my_tactic ==  3:
+            elif my_tactic == 3:
                 # continue
                 game_variables["mileage"] = game_variables["mileage"] - 5
                 print("They did not attack.")
@@ -701,14 +705,15 @@ def riders(game_variables):
             print("The riders were friendly, but check for possible losses")
         return game_variables
 
+
 def start_game():
     game_variables = setup()
     if builtins.input("Do you need instructions (yes/no) ") == "yes":
         instructions()
 
     game_week_dates = ["March 29", "April 12", "April 26", "May 10", "May 24", "June 7", "June 21", "July 5", "July 19",
-            "August 2", "August 16", "August 31", "September 13", "September 27", "October 11", "October 25",
-            "November 8", "November 22", "December 6", "December 20"]
+                       "August 2", "August 16", "August 31", "September 13", "September 27", "October 11", "October 25",
+                       "November 8", "November 22", "December 6", "December 20"]
 
     print("\nHow good a shot are you with your rifle?")
     print("\t(1) ace marksman,  (2) good shot,  (3) fair to middlin'")
@@ -719,7 +724,7 @@ def start_game():
     if my_shooting > 5 or my_shooting < 1:
         my_shooting = 0
     game_variables["shooting_expert_level"] = my_shooting
-    game_variables = initial_purchase(game_variables)
+    game_variables = initial_purchases(game_variables)
     game_variables["game_turn"] = -1
 
     while True:
@@ -745,6 +750,6 @@ def start_game():
             print(game_variables)
             break
 
+
 if __name__ == '__main__':
     start_game()
-    
