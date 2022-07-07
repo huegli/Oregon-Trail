@@ -1,0 +1,558 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"fib",
+				"fib_number"
+			],
+			[
+				"ct",
+				"ctype.h"
+			],
+			[
+				"fp",
+				"fprintf"
+			],
+			[
+				"pri",
+				"printf"
+			],
+			[
+				"print",
+				"printf"
+			],
+			[
+				"fprint",
+				"fprintf"
+			],
+			[
+				"fpr",
+				"fprintf"
+			],
+			[
+				"strin",
+				"string.h"
+			],
+			[
+				"pr",
+				"printf"
+			],
+			[
+				"prin",
+				"printf"
+			],
+			[
+				"stdih",
+				"stdio.h"
+			],
+			[
+				"ter",
+				"terminus_cancel_build"
+			],
+			[
+				"us",
+				"user_input"
+			],
+			[
+				"get",
+				"get_user_selection"
+			],
+			[
+				"s",
+				"science_scores"
+			],
+			[
+				"pass",
+				"passwd_to_csv"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "import random\nimport builtins\nimport keyboard\nimport time\n\n\ndef setup():\n    # set up the variables to be used in game\n    game_variables = {\n        # Identification of variables in the program\n        # amount spent on animals\n        \"animals\": 0,\n        # amount spent on ammunition\n        \"ammunition\": 0,\n        # amount spent on clothing\n        \"clothing\": 0,\n        # flag for insufficient clothing in cold weather\n        \"insufficient_clothing\": False,\n        # counter in generating events\n        \"event_counter\": 0,\n        # turn number for setting date\n        \"game_turn\": 0,\n        # choice of shooting expertise level\n        \"shooting_expert_level\": 0,\n        # choice of eating\n        \"eating_choice\": 0,\n        # amount spent on food\n        \"food\": 0,\n        # flag for clearing south pass\n        \"south_pass_flag\": False,\n        # flag for injury\n        \"injury\": False,\n        # flag for blizzard\n        \"blizzard\": False,\n        # total mileage whole trip\n        \"mileage\": 0,\n        # amount spent on miscellaneous supplies\n        \"supplies\": 0,\n        # total mileage up through previous turn\n        \"turn_mileage\": 0,\n        # flag for clearing south pass in setting mileage\n        \"South_Pass_Mileage_Flag\": False,\n        # flag for illness\n        \"illness\": False,\n        # cash in your wallet\n        \"cash\": 700,\n        # flag for fort option\n        \"fort_flag\": False\n    }\n    return game_variables\n\n\ndef shooting():\n    print(\"You pull your gun, aim, and pull the trigger\")\n    start_time = time.time()\n    seconds = 15\n    while True:\n        current_time = time.time()\n        elapsed_time = current_time - start_time\n\n        if elapsed_time > seconds:\n            print(\"Pop\")\n            my_score = 5\n            break\n        if keyboard.is_pressed(\" \"):\n            if elapsed_time < 1:\n                print(\"Wham!\")\n                my_score = 1\n            elif elapsed_time < 2:\n                print(\"POW!\")\n                my_score = 2\n            elif elapsed_time < 4:\n                print(\"Blam!\")\n                my_score = 3\n            else:\n                print(\"Bang\")\n                my_score = 4\n            break\n    return my_score\n\n\ndef illness(game_variables):\n    if random.randint(1, 100) < 10 + 35 * (game_variables[\"eating_choice\"] - 1):\n        print(\"Wild Illness - Medicine Used.\")\n        game_variables[\"mileage\"] = game_variables[\"mileage\"] - 5\n        game_variables[\"supplies\"] = game_variables[\"supplies\"] - 2\n    elif random.randint(1, 100) < 100 - (40 / 4 ** (game_variables[\"eating_choice\"] - 1)):\n        print(\"Bad Illness - Medicine Used.\")\n        game_variables[\"mileage\"] = game_variables[\"mileage\"] - 5\n        game_variables[\"supplies\"] = game_variables[\"supplies\"] - 5\n    else:\n        print(\"Serious Illness - You must stop for Medical Attention.\")\n        game_variables[\"illness\"] = False\n        game_variables[\"supplies\"] = game_variables[\"supplies\"] - 10\n\n    # I'm sorry, but you don't have any more supplies\n    if game_variables[\"supplies\"] < 10:\n        dying(\"no_supplies\")\n\n    # There was a blizzard so let's return to it...\n    if game_variables[\"blizzard\"] == 1:\n        return game_variables\n\n    return game_variables\n    \ndef mountains(game_variables):\n    # Are you in the mountains?\n    mountain_check = 9 - ((game_variables[\"mileage\"] / 100 - 15) **2 + 72) / (\n    (game_variables[\"mileage\"] / 100 - 15) ** 2 + 12)\n    \n    # A check to see if you have been caught in the mountains or not.\n    if random.randint(1, 10) > mountain_check:\n        # Congratulations you have found yourself in the mountains.\n        if game_variables[\"south_pass_flag\"]:\n            # Is there a blizzard in the mountains? If, there is a loop until the weather clears\n            if random.randint(1, 100) < 81: \n                print(\"You have been caught in a Blizzard in the Mountain Pass - Time and  Supplies lost.\")\n                blizzard(game_variables)\n            \n            else:\n                print(\"You made it safely through the South Pass -- No Snow\")\n                if game_variables[\"mileage\"] < 1700:\n                    game_variables[\"South_Pass_Mileage_Flag\"] = True\n                    return game_variables\n        \n        else:\n            print(\"\\nYou find yourself in some rugged mountains.\")\n            game_variables[\"mileage\"] = game_variables[\"mileage\"] - 60\n            \n            # let's check to see if you have been caught in a blizzard or not. For the rugged mountains, the chance is\n            # only 33%\n            if random.randint(1, 100) < 34:\n                print(\"You have been caught in a Blizzard in the Mountain Pass - Time and Supplies lost.\")\n                blizzard(game_variables)\n            elif random.randint(1, 100) > 10:\n                print(\"\\nWagon Damaged! - Lose time and supplies.\\nThe going gets slow.\")\n                game_variables[\"supplies\"] = game_variables[\"supplies\"] - 5\n                game_variables[\"ammunition\"] = game_variables[\"ammunition\"] - 200\n                game_variables[\"clothing\"] = game_variables[\"clothing\"] - (random.randint(1, 40))\n                game_variables[\"mileage\"] = game_variables[\"mileage\"] - 30 - (random.randint(1, 40))\n            elif random.randint(1, 100) > 10:\n                print(\"\\nYou got lost - lose valuable time trying to find the trail!\")\n                game_variables[\"mileage\"] = game_variables[\"mileage\"] - 60\n    return game_variables\n\ndef blizzard(game_variables):\n    # Here is a loop that will run until thte weather clears. There is a 20% chance that this might happen.\n    base_chance_of_blizzard_over = 20\n    while True:\n        print(\"\\nThe Snow and wind continues to rage.\")\n        game_variables[\"blizzard\"] = True\n        game_variables[\"food\"] = game_variables[\"food\"] - 25\n        game_variables[\"supplies\"] = game_variables[\"supplies\"] - 10\n        game_variables[\"ammunition\"] = game_variables[\"ammunition\"] - 300\n        game_variables[\"mileage\"] = game_variables[\"mileage\"] - 30 - (random.randint(1, 40)) \n\n        # This is where we will check to see if you have enought clothing to survice the bilzzard.\n        if game_variables[\"clothing\"] < 18 + random.randint(1, 3):\n            game_variables = illness(game_variables)\n\n        # Did the weather clear?\n        if random.randint(1, 100) < base_chance_of_blizzard_over:\n            print(\"\\nHurray! The Snow and wind start to break.\")\n            break\n\n        # every cycle, lets add 10 percent chance that the blizzard is over\n        base_chance_of_blizzard_over = base_chance_of_blizzard_over + 10\n\n        if game_variables[\"mileage\"] < 1000:\n            print(\"\\nThrough the wind and snow, you finally make it out of the mountains. But the wrong side.\")\n            break;\n\n        # You ran out of food, sorry.\n        if game_variables[\"food\"] < 0:\n            game_variables[\"food\"] = 0\n            dying(\"no_food\")\n\n        # You also ran out of supplies.\n        if game_variables[\"supplies\"] < 0:\n            game_variables[\"supplies\"] = 0\n            dying(\"no_supplies\")\n\n        # slow down the loop, so it is readable for the user.\n        time.sleep(5)\n    return game_variables\n\ndef dying(reason):\n    if reason != \"\":\n        if reason == \"no_food\":\n            print(\"You ran out of food and starved to death.\")\n        elif reason == \"no_doctor\":\n            print(\"You can't afford a doctor.\")\n        elif reason == \"no_supplies\":\n            print(\"You ran out of medical supplies\")\n        elif reason == \"injuries\":\n            # mishap = \"pneumonia.\"\n            mishap = \"injuries.\"\n            print(\"You died of \" + mishap)\n\n    print(\"Due to your unfortunate situation, there are a few\")\n    print(\"formalities we must go through\\n\")\n    print(\"Would you like a minister?\")\n    print(\"Would you like a fancy funeral?\")\n    print(\"Would you like us to inform your next of kin?\")\n\n    print(\"But your Aunt Sadie in St. Louis is really worride about you.\")\n\n    print(\"That will be $4.50 for the telegraph charge.\\n\")\n    print(\"We thank you for this information and we are sorry you \")\n    print(\"didn't make it to the great territory of Oregon\")\n    print(\"Sincerly,\")\n    print(\"\\nThe Oregon City Chamber of Commerce\")\n\ndef buying_routine(object_name, min_amount, max_amount, wallet):\n    my_purchase = 0\n    while True:\n        try:\n            my_purchase = int(builtins.input(\n                \"Wallet: \" + str(wallet) + \". How much do you want to spend on your \" + object_name + \": \"))\n        except ValueError:\n            print(\"Sorry, I didn't understand that.\")\n        if my_purchase < min_amount:\n            print(\"Sorry, that is not enough.\")\n            continue\n        elif my_purchase > max_amount:\n            print(\"Sorry, that is too much.\")\n            continue\n        elif my_purchase > wallet:\n            print(\"You don't have that much - keep your spending down.\")\n        else:\n            break\n    return my_purchase\n\ndef initial_purchases(game_variables):\n    # Oxen Team\n    oxen = buying_routine(\"oxen_team\", 200, 300, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - oxen\n    # Food\n    food = buying_routine(\"food\", 1, 99999, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - food\n\n    # ammo\n    ammo = buying_routine(\"ammunition\", 1, 99999, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - ammo\n\n    # clothing\n    clothing = buying_routine(\"clothing\", 1, 99999, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - clothing\n\n    # miscellaneous supplies\n    misc = buying_routine(\"miscellaneous supplies\", 1, 99999, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - misc\n\n    total = 700 - oxen - clothing - ammo - food - misc\n    if total < 0:\n        print(\"You Overspent -- You only had $700 to spend. Try Again.\")\n        initial_purchase(game_variables)\n\n    ammo = ammo * 50\n    print(\"After all your purchases. You now have %d dollars left.\" % total)\n\n    game_variables[\"cash\"] = total\n    game_variables[\"animals\"] = oxen\n    game_variables[\"ammunition\"] = ammo\n    game_variables[\"clothing\"] = clothing\n    game_variables[\"food\"] = food\n    game_variables[\"supplies\"] = misc\n\n    return game_variables\n\n\ndef instructions():\n    print(\"This program simulates a trip over the oregon trail from Independenc,\")\n    print(\"Missouri to Oregon City, Oregon in 1847 your family of five will cover\")\n    print(\"the 2040 mile Oregon Trail in 5-6 months -- if you make it alive.\\n\")\n    print(\"You had saved $900 to spend for the trip, and you've just paid $200 for a wagon.\")\n    print(\"You will need to spend the rest of your money on the following items:\\n\")\n    print(\"     Oxen - you can spend $200 - $300 on your team\")\n    print(\"            the more you spend, the faster you'll go\")\n    print(\"            because you'll have better animals\\n\")\n    print(\"     Food - the more you have, the less chance there\")\n    print(\"            is of getting sick\\n\")\n    print(\"     Ammunition - $1 buys a belt of 50 bullets\")\n    print(\"            you will need bullets for attacks by animals\")\n    print(\"            and bandits, and for hunting food\\n\")\n    print(\"     Clothing - this is sepectially important for the cold\")\n    print(\"            weather you will encounter when crossing\")\n    print(\"            the mountains\\n\")\n    print(\"     Miscellaneous supplies - this includes medicine and\")\n    print(\"            other things you will need for sickness and\")\n    print(\"            emergency repairs\\n\\n\")\n    print(\"You can spend all your money before you start your trip -\")\n    print(\"or you can save some of your cash to spend at forts along\")\n    print(\"the way when you run low. However, items cost more at\")\n    print(\"the forts. You can also go hunting along the way to get\")\n    print(\"more food.\\n\")\n    print(\"Whenever you have to use your trusty rifle along teh way,\")\n    print(\"you will be told to type in a word (one that sounds lie a \")\n    print(\"gun shot). the faster you type in that word and hit the\")\n    print(\"'return' key, the better luck you'll have with your gun.\\n\")\n    print(\"at each turn, all items are shown in dollar amounts\")\n    print(\"except bullets\")\n    print(\"when asked to enter money amounts, don't use a \"\"$\"\".\\n\")\n    print(\"good luck!!!\")\n\ndef user_stats(game_variables):\n    # if any of the variables are below zero, we will set them to zero here.\n    if game_variables[\"food\"] < 0:\n        game_variables[\"food\"] = 0\n    if game_variables[\"ammunition\"] < 0:\n        game_variables[\"ammunition\"] = 0\n    if game_variables[\"clothing\"] < 0:\n        game_variables[\"clothing\"] = 0\n    if game_variables[\"supplies\"] < 0:\n        game_variables[\"supplies\"] = 0\n    if game_variables[\"cash\"] < 0:\n        game_variables[\"cash\"] = 0\n\n    print(\"Food:            % d\" % game_variables[\"food\"])\n    print(\"Bullets:         % d\" % game_variables[\"ammo\"])\n    print(\"Clothing:        % d\" % game_variables[\"clothing\"])\n    print(\"Misc. Supplies:  % d\" % game_variables[\"supplies\"])\n    print(\"Cash:            % d\" % game_variables[\"cash\"])\n    return\n\ndef final_turn(game_variables):\n    print(\"You finally arrived at Oregon City\\nafter 2040 long miles - Hooray!!\\nA Real Pioneer\")\n    time_calculation = (2040 - game_variables[\"turn_mileage\"]) / (\n        game_variables[\"mileage\"] - game_variables[\"turn_mileage\"])\n    game_variables[\"food\"] = game_variables[\"food\"] + (1 - time_calculation) * (8 + 5 * game_variables[\"eating_choice\"])\n\n    time_calculation = int(time_calculation * 14)\n    game_variables[\"game_turn\"] = game_variables[\"game_turn\"] * 14 + time_calculation\n\n    if time_calculation < 0:\n        time_calculation = 0\n    if time_calculation > 6:\n        time_calculation = 6\n\n    days_list = [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", \"Sunday\"]\n    the_day =days_list[time_calculation]\n\n    if game_variables[\"game_turn\"] < 124:\n        game_variables[\"game_turn\"] = game_variables[\"game_turn\"] - 93\n        print(the_day + \", July \" + str(game_variables[\"game_turn\"]) + \", 1847\")\n    elif game_variables[\"game_turn\"] < 155:\n        game_variables[\"game_turn\"] = game_variables[\"game_turn\"] - 124\n        print(the_day + \", August \" + str(game_variables[\"game_turn\"]) + \", 1847\")\n    elif game_variables[\"game_turn\"] < 185:\n        game_variables[\"game_turn\"] = game_variables[\"game_turn\"] - 155\n        print(the_day + \", September \" + str(game_variables[\"game_turn\"]) + \", 1847\")\n    elif game_variables[\"game_turn\"] < 216:\n        game_variables[\"game_turn\"] = game_variables[\"game_turn\"] - 185\n        print(the_day + \", October \" + str(game_variables[\"game_turn\"]) + \", 1847\")\n    elif game_variables[\"game_turn\"] < 246:\n        game_variables[\"game_turn\"] = game_variables[\"game_turn\"] - 216\n        print(the_day + \", November \" + str(game_variables[\"game_turn\"]) + \", 1847\")\n    else:\n        game_variables[\"game_turn\"] = game_variables[\"game_turn\"] - 246\n        print(the_day + \", December \" + str(game_variables[\"game_turn\"]) + \", 1847\")\n    \n    user_stats(game_variables)\n    print(\"\\tPresident James K. Polk sends you his\\n\\theartiest congratulations\")\n    print(\"\\tAnd wishes you a prosperous life ahead\\n\\tat your new home.\")\n\ndef game_loop(game_variables):\n    input_x = 0\n    if game_variables[\"food\"] < 0:\n        game_variables[\"food\"] = 0;\n\n    if game_variables[\"ammunition\"] < 0:\n        game_variables[\"ammunition\"] = 0;\n\n    if game_variables[\"clothing\"] < 0:\n        game_variables[\"clothing\"] = 0;\n\n    if game_variables[\"supplies\"] < 0:\n        game_variables[\"supplies\"] = 0;\n\n    if game_variables[\"food\"] < 13:\n        print(\"\\n\\nYou'd better do some hunting or buy food and soon!!!!\")\n\n    game_variables[\"food\"] = int(game_variables[\"food\"])\n    game_variables[\"ammunitition\"] = int(game_variables[\"ammunitition\"])\n    game_variables[\"clothing\"] = int(game_variables[\"clothing\"])\n    game_variables[\"supplies\"] = int(game_variables[\"supplies\"])\n    game_variables[\"cash\"] = int(game_variables[\"cash\"])\n    game_variables[\"mileage\"] = int(game_variables[\"mileage\"])\n    \n    game_variables[\"turn_mileage\"] = game_variables[\"mileage\"]\n\n    if game_variables[\"illness\"] or game_variables[\"injury\"]:\n        game_variables[\"cash\"] = game_variables[\"cash\"] - 20\n        game_variables[\"illness\"] = False\n        game_variables[\"injury\"] = False\n        if game_variables[\"cash\"] < 0:\n            dying(\"no_doctor\")\n        print(\"Doctor's Bill is $20.\")\n\n    if game_variables[\"South_Pass_Mileage_Flag\"]:\n        print(\"Total Mileage:   950\")\n    else:\n        print(\"Total Mileage:   % d\" % game_variables[\"mileage\"])\n    user_stats(game_variables)\n\n    if not game_variables[\"fort_flag\"]:\n        while True:\n            try:\n                input_x = int(builtins.input(\"\\nDo you want to (1) Hunt, or (2) Continue: \"))\n            except ValueError:\n                print(\"Sorry, I didn't understand that.\")\n            if input_x < 1 or input_x > 2:\n                input_x = 3\n                break\n            elif input_x == 2 and game_variables[\"ammunition\"] < 39:\n                print(\"TOUGH -- You need more bullets to go hunting\")\n            else:\n                game_variables[\"fort_flag\"] = True\n                input_x = input_x + 1\n                break\n    else:\n        while True:\n            try:\n                input_x = int(builtins.input(\"Do you want to (1) Stop at the next fort, (2) Hunt, or (3) Continue: \"))\n            except ValueError:\n                print(\"Sorry, I didn't understand that.\")\n            if input_x < 1 or input_x > 3:\n                input_x = 3\n                break\n            elif input_x == 2 and game_variables[\"ammunition\"] < 39:\n                print(\"TOUGH -- You need more bullets to go hunting.\")\n            else:\n                break\n\n\n    if input_x == 1:\n        game_variables = fort(game_variables)\n    elif input_x == 2:\n        game_variables = hunting(game_variables)\n\n    if game_variables(\"food\") < 14:\n        dying(\"no_food\")\n    while True:\n        try:\n            input_x = int(builtins.input(\"Do you want to eat (1) Poorly, (2) Moderately, or (3) Well: \"))\n        except ValueError:\n            print(\"Sorry, I didn't understand that.\")\n        if (game_variables[\"food\"] == (8 - 5 * input_x)) < game_variables[\"food\"]:\n            print(\"You can't eat that well.\")\n        elif input_x == 2 and game_variables[\"ammunition\"] < 39:\n            print(\"TOUGH -- you need more bullets to go hunting.\")\n        else:\n            break\n\n    game_variables[\"food\"] = game_variables[\"food\"] - (8 + 5 * input_x)\n    game_variables[\"mileage\"] = game_variables[\"mileage\"] + 200 + (\n            game_variables[\"animals\"] - 220) / 5 + random.randint(1, 10)\n    game_variables[\"insufficient_clothing\"] = False\n    game_variables[\"blizzard\"] = False\n\n    return game_variables\n\ndef fort(game_variables):\n    print(\"Enter what you wish to spend on the following:\")\n    # food\n    food = buying_routine(\"food\", 0, 9999, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - food\n    game_variables[\"food\"] = game_variables[\"food\"] + int(.66 * food)\n\n    # ammo\n    ammo = buying_routine(\"ammo\", 0, 9999, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - ammo\n    game_variables[\"ammunition\"] = game_variables[\"ammunition\"] + int(.66 * ammo) * 50\n\n    # clothing\n    clothing = buying_routine(\"clothing\", 0, 9999, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - clothing\n    game_variables[\"clothing\"] = game_variables[\"clothing\"] + int(.66 * clothing)\n\n    # miscellaneous supplies\n    misc = buying_routine(\"misc\", 0, 9999, game_variables[\"cash\"])\n    game_variables[\"cash\"] = game_variables[\"cash\"] - misc\n    game_variables[\"supplies\"] = game_variables[\"supplies\"] + int(.66 * misc)\n\n    game_variables[\"mileage\"] = game_variables[\"mileage\"] - 45\n\n    return game_variables\n\ndef hunting(game_variables):\n    # let's check to see if you have enough bullets to go hunting. You need 39 or more\n    if game_variables[\"ammunition\"] > 39:\n        my_shooting = shooting()\n        game_variables[\"ammunition\"] = game_variables[\"ammunition\"] - (random.randint(1,10) * 3)\n\n        if my_shooting > 4:\n            print(\"You Missed -- and your dinner got away..\")\n        elif my_shooting < 3:\n            print(\"Right Between the Eyes -- You got a big one!! Full bellies tonight!\")\n            game_variables[\"food\"] = game_variables[\"food\"] + 52 + (my_shooting * 6)\n        else:\n            print(\"Nice Shot! Right on target - Good Eatin' Tonight\")\n            game_variables[\"food\"] = game_variables[\"food\"] + 48 + (my_shooting * 2)\n    else:\n        print(\"You need more bullets to go hunting.\")\n\n    game_variables[\"mileage\"] = game_variables[\"mileage\"] - 45\n    if game_variables[\"food\"] < 14:\n        dying(\"no_food\")\n\n    return game_variables\n\ndef do_events(game_variables):\n    if random.randint(1, 100) < 50:\n        # 33% chanc that an event would happen. But, each event would be an incremental sequence\n        # \n",
+			"file": "python/main.py",
+			"file_size": 21215,
+			"file_write_time": 132949876757372870,
+			"settings":
+			{
+				"buffer_size": 21225,
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					5,
+					1,
+					"insert",
+					{
+						"characters": "jj"
+					},
+					"AgAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAACAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					6,
+					2,
+					"left_delete",
+					null,
+					"AgAAAAEAAAAAAAAAAQAAAAAAAAABAAAAagAAAAAAAAAAAAAAAAAAAAABAAAAag",
+					"AQAAAAAAAAABAAAAAgAAAAAAAAACAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					11,
+					1,
+					"reindent",
+					null,
+					"AQAAAN5SAAAAAAAA5lIAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA3lIAAAAAAADeUgAAAAAAAAAAAAAAAAAA"
+				],
+				[
+					12,
+					1,
+					"insert",
+					{
+						"characters": "#"
+					},
+					"AQAAAOZSAAAAAAAA51IAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA5lIAAAAAAADmUgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					13,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAOdSAAAAAAAA6FIAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA51IAAAAAAADnUgAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"qu",
+				"Debugger: Quit"
+			],
+			[
+				"de",
+				"Debugger: Open"
+			],
+			[
+				"ter",
+				"Terminus: Toggle Panel"
+			],
+			[
+				"Add",
+				"Debugger: Add Configuration"
+			],
+			[
+				"install ad",
+				"Debugger: Install Adapters"
+			],
+			[
+				"Debugg",
+				"Debugger: Install Adapters"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"subl",
+				"SublimeLinter: Quick Action"
+			],
+			[
+				"su",
+				"SublimeGDB: Start Debugging"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"spaces",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"view pa",
+				"View Package File"
+			],
+			[
+				"term",
+				"Terminus: Open Default Shell in Panel"
+			],
+			[
+				"converto",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"auto",
+				"Anaconda: Autoformat PEP8 Errors"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"istallp",
+				"Package Control: Install Package"
+			],
+			[
+				"pakcrep",
+				"Package Control: Remove Package"
+			],
+			[
+				"pa",
+				"Package Control: List Packages"
+			],
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"list pa",
+				"Package Control: List Packages"
+			],
+			[
+				"",
+				"Arithmetic"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"set synlua",
+				"Set Syntax: Lua"
+			],
+			[
+				"lsp lint",
+				"Trim Trailing White Space"
+			],
+			[
+				"packa",
+				"Package Control: List Packages"
+			],
+			[
+				"lsp",
+				"Package Control: Disable Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"conver",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"convert to s",
+				"Indentation: Convert to Spaces"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 426.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/nikolai/Dropbox/Programing/mine/Oregon-Trail/python"
+	],
+	"file_history":
+	[
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/Fibonacci/fibonnaci_recursive.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/Fibonacci/fibonacci_class.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/Fibonacci/fibonnaci_iterative.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/Fibonacci/fibonnaci_rec_opt.py",
+		"/Users/nikolai/dotfiles/.git/COMMIT_EDITMSG",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter3/nato02.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/TinyCProjects.sublime-project",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/pithy06.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/greet01_basic.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/pithy03.c",
+		"/Users/nikolai/dotfiles/sublime-text/User/CLang-Debug.sublime-build",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/greet05_moon.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/pithy05.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/pithy04.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/pithy01.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/pithy02.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/pithy.txt",
+		"/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/time.h",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/greet02_basic.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/time01.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/greet03_time.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/time02.c",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_C/TinyCProjects/chapter2/greet04_time.c",
+		"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.8/lib/python3.8/tkinter/__init__.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/MandelBrotPython/ascii.py",
+		"/Users/nikolai/Library/Application Support/Sublime Text 3/Packages/User/Python Terminus.sublime-build",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/RockPaperScissors/RockPaperScissors.sublime-project",
+		"/Users/nikolai/Library/Application Support/Sublime Text 3/Packages/Python/Python.sublime-build",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/RockPaperScissors/rockpaperscissors.py",
+		"/Users/nikolai/Library/Application Support/Sublime Text 3/Packages/SublimeLinter/SublimeLinter.sublime-settings",
+		"/usr/local/Cellar/python@3.9/3.9.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/collections/__init__.py",
+		"/Users/nikolai/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Lua/Programing_in_Lua/chap01/name.py",
+		"/Users/nikolai/PixelVision8/Workspace/MyFirstGame/code.lua",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap05/test_chap05.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap05/passwd_to_csv.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap05/passwd_to_dict.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap05/longest_word.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap05/wordcount.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap05/finalline.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap04/restaurant.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap04/test_chap04.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap04/dictdiff.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap01/mysum.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/.pytest_cache/v/cache/stepwise",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/chap04/different.py",
+		"/Users/nikolai/Dropbox/Programing/mine/Learning_Python/PythonWorkout/pythonworkout.sublime-project",
+		"/Users/nikolai/Dropbox/Programing/mine/Websites/nikolaischlegel.com/contact.html",
+		"/Users/nikolai/Dropbox/Programing/mine/Websites/nikolaischlegel.com/index.html",
+		"/Users/nikolai/Dropbox/Programing/mine/Websites/nikolaischlegel.com/resume.html"
+	],
+	"find":
+	{
+		"height": 37.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "python/main.py",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 21225,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								21224,
+								21224
+							]
+						],
+						"settings":
+						{
+							"font_size": 16,
+							"platform_settings_was_here": true,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 10991.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 37.0
+	},
+	"input":
+	{
+		"height": 41.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/C++/C++ Single File.sublime-build",
+	"project": "Oregon-Trail.sublime-project",
+	"replace":
+	{
+		"height": 70.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"scor",
+				"chap05/scores.py"
+			],
+			[
+				"test",
+				"chap05/test_chap05.py"
+			],
+			[
+				"ste",
+				".pytest_cache/v/cache/stepwise"
+			],
+			[
+				"resta",
+				"chap04/restaurant.py"
+			],
+			[
+				"re",
+				"chap04/restaurant.py"
+			],
+			[
+				"te",
+				"chap04/test_chap04.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Dropbox/Programing/mine/Websites/nikolaischlegel.com/nikolaischlegel-com.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 75.0,
+		"last_filter": "dict",
+		"selected_items":
+		[
+			[
+				"dict",
+				"dictdiff"
+			],
+			[
+				"rest",
+				"restaurant"
+			],
+			[
+				"my",
+				"mysum"
+			]
+		],
+		"width": 592.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 258.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
