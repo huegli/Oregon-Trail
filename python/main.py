@@ -1,6 +1,5 @@
 import random
 import builtins
-import keyboard
 import time
 
 
@@ -54,29 +53,37 @@ def shooting():
     print("You pull your gun, aim, and pull the trigger")
     start_time = time.time()
     seconds = 15
-    while True:
-        current_time = time.time()
-        elapsed_time = current_time - start_time
+    trigger = "shoot"
+    shot = input(f"Type {trigger}")
 
-        if elapsed_time > seconds:
-            print("Pop")
-            my_score = 5
-            break
-        if keyboard.is_pressed(" "):
-            if elapsed_time < 1:
-                print("Wham!")
-                my_score = 1
-            elif elapsed_time < 2:
-                print("POW!")
-                my_score = 2
-            elif elapsed_time < 4:
-                print("Blam!")
-                my_score = 3
-            else:
-                print("Bang")
-                my_score = 4
-            break
-    return my_score
+    if trigger == shot:
+        return 5
+    else:
+        return 0
+
+    # while True:
+    #     current_time = time.time()
+    #     elapsed_time = current_time - start_time
+
+    #     if elapsed_time > seconds:
+    #         print("Pop")
+    #         my_score = 5
+    #         break
+    #     if keyboard.is_pressed(" "):
+    #         if elapsed_time < 1:
+    #             print("Wham!")
+    #             my_score = 1
+    #         elif elapsed_time < 2:
+    #             print("POW!")
+    #             my_score = 2
+    #         elif elapsed_time < 4:
+    #             print("Blam!")
+    #             my_score = 3
+    #         else:
+    #             print("Bang")
+    #             my_score = 4
+    #         break
+    # return my_score
 
 
 def illness(game_variables):
@@ -274,7 +281,7 @@ def initial_purchases(game_variables):
 
 
 def instructions():
-    print("This program simulates a trip over the oregon trail from Independenc,")
+    print("This program simulates a trip over the oregon trail from Independence,")
     print("Missouri to Oregon City, Oregon in 1847 your family of five will cover")
     print("the 2040 mile Oregon Trail in 5-6 months -- if you make it alive.\n")
     print("You had saved $900 to spend for the trip, and you've just paid $200 for a wagon.")
@@ -298,8 +305,8 @@ def instructions():
     print("the way when you run low. However, items cost more at")
     print("the forts. You can also go hunting along the way to get")
     print("more food.\n")
-    print("Whenever you have to use your trusty rifle along teh way,")
-    print("you will be told to type in a word (one that sounds lie a ")
+    print("Whenever you have to use your trusty rifle along the way,")
+    print("you will be told to type in a word (one that sounds like a ")
     print("gun shot). the faster you type in that word and hit the")
     print("'return' key, the better luck you'll have with your gun.\n")
     print("at each turn, all items are shown in dollar amounts")
@@ -322,7 +329,7 @@ def user_stats(game_variables):
         game_variables["cash"] = 0
 
     print("Food:            % d" % game_variables["food"])
-    print("Bullets:         % d" % game_variables["ammo"])
+    print("Bullets:         % d" % game_variables["ammunition"])
     print("Clothing:        % d" % game_variables["clothing"])
     print("Misc. Supplies:  % d" % game_variables["supplies"])
     print("Cash:            % d" % game_variables["cash"])
